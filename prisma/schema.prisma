@@ -1,0 +1,232 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String    @id @default(uuid())
+  companyId String
+  company   Company   @relation(fields: [companyId], references: [id])
+  email     String    @unique
+  password  String
+  name      String
+  role      String    @default("ADMIN") // ADMIN, ACCOUNTANT, VIEWER
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([email])
+}
+
+model Company {
+  id                  String    @id @default(uuid())
+  name                String
+  logo                String?
+  address             String?
+  phone               String?
+  email               String?
+  website             String?
+  taxId               String?
+  defaultCurrency     String    @default("USD")
+  defaultTaxRate      Float     @default(0)
+  invoicePrefix       String    @default("INV-")
+  invoiceStartNumber  Int       @default(1)
+  quotePrefix         String    @default("QUO-")
+  quoteStartNumber    Int       @default(1)
+  defaultTerms        String?
+  defaultNotes        String?
+  paymentInstructions String?
+  
+  // SMTP Settings
+  smtpHost            String?
+  smtpPort            Int?
+  smtpUser            String?
+  smtpPass            String?
+  smtpFromName        String?
+  smtpFromEmail       String?
+  // Stripe Settings
+  stripeSecretKey     String?
+  stripeWebhookSecret String?
+
+  users               User[]
+  clients             Client[]
+  invoices            Invoice[]
+  products            Product[]
+  taxRates            TaxRate[]
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Client {
+  id             String    @id @default(uuid())
+  companyId      String
+  company        Company   @relation(fields: [companyId], references: [id])
+  name           String
+  clientCompany  String?
+  email          String?
+  phone          String?
+  billingAddress String?
+  taxId          String?
+  currency       String?
+  paymentTerms   String    @default("Net 15") // Net 7, Net 15, Net 30, Custom
+  invoices       Invoice[]
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  @@index([companyId])
+}
+
+model Invoice {
+  id                  String        @id @default(uuid())
+  companyId           String
+  company             Company       @relation(fields: [companyId], references: [id])
+  clientId            String
+  client              Client        @relation(fields: [clientId], references: [id])
+  number              String
+  token               String?       @unique @default(uuid())
+  status              String        @default("DRAFT") // DRAFT, SENT, VIEWED, PARTIALLY_PAID, PAID, OVERDUE, CANCELLED
+  issueDate           DateTime
+  dueDate             DateTime
+  currency            String        @default("USD")
+  
+  subtotal            Float         @default(0)
+  discountType        String        @default("PERCENTAGE") // PERCENTAGE, FIXED
+  discountValue       Float         @default(0)
+  discountAmount      Float         @default(0)
+  taxTotal            Float         @default(0)
+  grandTotal          Float         @default(0)
+  
+  notes               String?
+  terms               String?
+  paymentInstructions String?
+  pdfTheme            String        @default("CLASSIC") // CLASSIC, MODERN
+  
+  lineItems           InvoiceItem[]
+  payments            Payment[]
+  emailLogs           EmailLog[]
+  schedules           RecurringSchedule[]
+
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  deletedAt           DateTime?
+
+  @@unique([companyId, number])
+  @@index([clientId])
+  @@index([status])
+}
+
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  productId   String?
+  description String
+  quantity    Float
+  unitPrice   Float
+  taxRateId   String?
+  taxAmount   Float    @default(0)
+  lineTotal   Float
+  sortOrder   Int      @default(0)
+
+  @@index([invoiceId])
+}
+
+model Payment {
+  id              String   @id @default(uuid())
+  invoiceId       String
+  invoice         Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  amount          Float
+  date            DateTime
+  method          String   // BANK_TRANSFER, CASH, CARD, CHEQUE, MOBILE_MONEY
+  referenceNumber String?
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  @@index([invoiceId])
+}
+
+model Product {
+  id           String    @id @default(uuid())
+  companyId    String
+  company      Company   @relation(fields: [companyId], references: [id])
+  name         String
+  description  String?
+  defaultPrice Float     @default(0)
+  taxRateId    String?
+  unit         String    @default("Unit") // Hr, Item, Service
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  @@index([companyId])
+}
+
+model TaxRate {
+  id        String    @id @default(uuid())
+  companyId String
+  company   Company   @relation(fields: [companyId], references: [id])
+  name      String
+  rate      Float
+  isDefault Boolean   @default(false)
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([companyId])
+}
+
+model EmailLog {
+  id             String   @id @default(uuid())
+  invoiceId      String
+  invoice        Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  recipientEmail String
+  subject        String
+  status         String   // SENT, FAILED, BOUNCED
+  errorMessage   String?
+  sentAt         DateTime @default(now())
+
+  @@index([invoiceId])
+}
+
+model RecurringSchedule {
+  id          String   @id @default(uuid())
+  invoiceId   String   // The template invoice
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  frequency   String   // WEEKLY, MONTHLY, QUARTERLY, YEARLY
+  nextRunDate DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([isActive, nextRunDate])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String
+  action     String   // CREATE, UPDATE, DELETE
+  entityType String   // INVOICE, CLIENT, PRODUCT, etc.
+  entityId   String
+  changes    String?  // JSON string
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String   // OVERDUE, PAYMENT_RECEIVED, RECURRING_GENERATED
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+}
