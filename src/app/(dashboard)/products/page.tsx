@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, Plus, Box, Edit, Trash2, Download, Upload, Package, Tag, Layers } from 'lucide-react';
+import { Search, Plus, Box, Eye, Edit, Trash2, Download, Upload, Package, Tag, Layers } from 'lucide-react';
 import { toast } from 'sonner';
+import ActionDropdown from '@/components/ActionDropdown';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -206,10 +207,10 @@ export default function ProductsPage() {
                     <span className="px-3 py-1.5 bg-gray-100 rounded-lg text-[10px] font-bold text-gray-600 uppercase tracking-wider border border-gray-200">{product.unit}</span>
                   </td>
                   <td className="py-4 px-4 text-right rounded-r-xl border-y border-r border-transparent group-hover:border-gray-100">
-                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => openEditModal(product)} className="p-2 text-gray-400 hover:text-brand-primary bg-white rounded-lg hover:shadow-sm border border-transparent hover:border-gray-100 transition-all"><Edit size={16} /></button>
-                      <button onClick={() => handleDelete(product)} className="p-2 text-gray-400 hover:text-red-500 bg-white rounded-lg hover:shadow-sm border border-transparent hover:border-gray-100 transition-all"><Trash2 size={16} /></button>
-                    </div>
+                    <ActionDropdown actions={[
+                      { label: 'Edit', icon: <Edit size={16} />, onClick: () => openEditModal(product) },
+                      { label: 'Delete', icon: <Trash2 size={16} />, variant: 'danger', onClick: () => handleDelete(product) }
+                    ]} />
                   </td>
                 </tr>
               ))}

@@ -2,13 +2,17 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Plus, Search, Filter, Eye, Download, Upload, Trash2, FileText, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Plus, Search, Filter, Eye, Edit, Download, Upload, Trash2, FileText, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import ActionDropdown from '@/components/ActionDropdown';
 
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
+  const router = useRouter();
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -246,23 +250,16 @@ export default function InvoicesPage() {
                     </span>
                   </td>
                   <td className="py-4 px-4 text-right rounded-r-xl border-y border-r border-transparent group-hover:border-gray-100">
-                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Link href={`/invoices/${invoice.id}`} className="p-2 text-gray-400 hover:text-brand-primary bg-white rounded-lg hover:shadow-sm border border-transparent hover:border-gray-100 transition-all">
-                        <Eye size={16} />
-                      </Link>
-                      <button
-                        onClick={async () => {
-                          if (!window.confirm(`Delete invoice ${invoice.number}? This cannot be undone.`)) return;
-                          const res = await fetch(`/api/invoices/${invoice.id}`, { method: 'DELETE' });
-                          if (res.ok) {
-                            setInvoices(invoices.filter((i: any) => i.id !== invoice.id));
-                          }
-                        }}
-                        className="p-2 text-gray-400 hover:text-red-500 bg-white rounded-lg hover:shadow-sm border border-transparent hover:border-gray-100 transition-all"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
+                    <ActionDropdown actions={[
+                      { label: 'View', icon: <Eye size={16} />, onClick: () => router.push(`/invoices/${invoice.id}`) },
+                      { label: 'Edit', icon: <Edit size={16} />, onClick: () => router.push(`/invoices/${invoice.id}`) },
+                      { label: 'Delete', icon: <Trash2 size={16} />, variant: 'danger', onClick: async () => {
+                        if (!window.confirm(`Delete invoice ${invoice.number}?`)) return;
+                        const res = await fetch(`/api/invoices/${invoice.id}`, { method: 'DELETE' });
+                        if (res.ok) { toast.success('Invoice deleted'); setInvoices(invoices.filter((i: any) => i.id !== invoice.id)); }
+                        else toast.error('Failed to delete invoice');
+                      }}
+                    ]} />
                   </td>
                 </tr>
               ))}

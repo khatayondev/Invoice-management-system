@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Search, Plus, User, Building, Mail, Trash2, Download, Upload, Users, Activity, FileText } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, Plus, User, Building, Mail, Eye, Edit, Trash2, Download, Upload, Users, Activity, FileText } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
+import ActionDropdown from '@/components/ActionDropdown';
 
 const clientSchema = z.object({
   name: z.string().min(1, 'Contact name is required'),
@@ -25,6 +27,7 @@ export default function ClientsPage() {
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<ClientFormValues>({
     resolver: zodResolver(clientSchema),
@@ -236,23 +239,16 @@ export default function ClientsPage() {
                     </span>
                   </td>
                   <td className="py-4 px-4 text-right rounded-r-xl border-y border-r border-transparent group-hover:border-gray-100">
-                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Link href={`/clients/${client.id}`} className="p-2 text-gray-400 hover:text-brand-primary bg-white rounded-lg hover:shadow-sm border border-transparent hover:border-gray-100 transition-all font-medium text-xs flex items-center gap-1">
-                        View
-                      </Link>
-                      <button
-                        onClick={async (e) => {
-                          e.stopPropagation();
-                          if (!window.confirm(`Delete client "${client.name}"? This cannot be undone.`)) return;
-                          const res = await fetch(`/api/clients/${client.id}`, { method: 'DELETE' });
-                          if (res.ok) { toast.success('Client deleted'); fetchClients(); }
-                          else toast.error('Failed to delete client');
-                        }}
-                        className="p-2 text-gray-400 hover:text-red-500 bg-white rounded-lg hover:shadow-sm border border-transparent hover:border-gray-100 transition-all"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
+                    <ActionDropdown actions={[
+                      { label: 'View', icon: <Eye size={16} />, onClick: () => router.push(`/clients/${client.id}`) },
+                      { label: 'Edit', icon: <Edit size={16} />, onClick: () => router.push(`/clients/${client.id}`) },
+                      { label: 'Delete', icon: <Trash2 size={16} />, variant: 'danger', onClick: async () => {
+                        if (!window.confirm(`Delete client "${client.name}"?`)) return;
+                        const res = await fetch(`/api/clients/${client.id}`, { method: 'DELETE' });
+                        if (res.ok) { toast.success('Client deleted'); fetchClients(); }
+                        else toast.error('Failed to delete client');
+                      }}
+                    ]} />
                   </td>
                 </tr>
               ))}
