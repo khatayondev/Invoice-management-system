@@ -26,7 +26,7 @@ export async function proxy(request: NextRequest) {
 
   // Redirect to dashboard if accessing a public auth route with a valid session
   if (session && isPublicRoute && (path === '/login' || path === '/register')) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   return NextResponse.next();
