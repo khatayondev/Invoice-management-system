@@ -25,9 +25,9 @@ export default function FinalCTA() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 lp-animate">
-          <Link href="/register" className="bg-white text-[#4318FF] font-bold px-8 py-4 rounded-2xl text-lg hover:bg-gray-100 shadow-2xl shadow-black/10 transition-all hover:-translate-y-1 hover:scale-105">
+          <a href="/login" className="bg-white text-[#4318FF] font-bold px-8 py-4 rounded-2xl text-lg hover:bg-gray-100 shadow-2xl shadow-black/10 transition-all hover:-translate-y-1 hover:scale-105">
             Create Your Free Account
-          </Link>
+          </a>
           <a href="#how-it-works" className="border-2 border-white/30 text-white font-bold px-8 py-4 rounded-2xl text-lg hover:bg-white/10 transition-all hover:-translate-y-0.5">
             Book a Demo
           </a>
