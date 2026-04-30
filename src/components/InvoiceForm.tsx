@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Plus, Trash2, Save, FileText } from 'lucide-react';
+import { CURRENCIES, DEFAULT_CURRENCY, getCurrencySymbol } from '@/lib/currencies';
 
 export default function InvoiceForm({ companySettings, clients, products }: any) {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function InvoiceForm({ companySettings, clients, products }: any)
   const [clientId, setClientId] = useState(defaultClientId || '');
   const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
   const [dueDate, setDueDate] = useState(new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]); // Default 15 days
-  const [currency, setCurrency] = useState(companySettings?.defaultCurrency || 'USD');
+  const [currency, setCurrency] = useState(companySettings?.defaultCurrency || DEFAULT_CURRENCY);
   const [pdfTheme, setPdfTheme] = useState('CLASSIC');
   
   // Line Items
@@ -168,10 +169,9 @@ export default function InvoiceForm({ companySettings, clients, products }: any)
           <div>
             <label className="form-label">Currency</label>
             <select className="form-input" value={currency} onChange={e => setCurrency(e.target.value)}>
-              <option value="USD">USD ($)</option>
-              <option value="EUR">EUR (€)</option>
-              <option value="GBP">GBP (£)</option>
-              <option value="GHS">GHS (GH₵)</option>
+              {CURRENCIES.map(c => (
+                <option key={c.code} value={c.code}>{c.code} ({c.symbol}) — {c.name}</option>
+              ))}
             </select>
           </div>
           <div>

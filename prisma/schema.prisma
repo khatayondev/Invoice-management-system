@@ -32,7 +32,7 @@ model Company {
   email               String?
   website             String?
   taxId               String?
-  defaultCurrency     String    @default("USD")
+  defaultCurrency     String    @default("GHS")
   defaultTaxRate      Float     @default(0)
   invoicePrefix       String    @default("INV-")
   invoiceStartNumber  Int       @default(1)

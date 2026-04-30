@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Building, FileText, Mail, CreditCard, Users, CheckCircle2, ChevronRight, Save, Trash2, Plus } from 'lucide-react';
+import { CURRENCIES, DEFAULT_CURRENCY } from '@/lib/currencies';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('company');
@@ -143,22 +144,58 @@ export default function SettingsPage() {
                         </div>
                         <div>
                           <label className="form-label">Contact Email</label>
-                          <input name="email" value={data.email || ''} onChange={handleChange} type="email" className="form-input py-3 hover:border-gray-300 transition-colors" placeholder="contact@acme.com" />
+                          <input name="email" value={data.email || ''} onChange={handleChange} type="email" className="form-input py-3 hover:border-gray-300 transition-colors" placeholder="contact@company.com" />
                         </div>
                         <div>
                           <label className="form-label">Phone Number</label>
-                          <input name="phone" value={data.phone || ''} onChange={handleChange} className="form-input py-3 hover:border-gray-300 transition-colors" placeholder="+1 (555) 000-0000" />
+                          <input name="phone" value={data.phone || ''} onChange={handleChange} className="form-input py-3 hover:border-gray-300 transition-colors" placeholder="+233 XX XXX XXXX" />
                         </div>
                         <div>
                           <label className="form-label">Website</label>
-                          <input name="website" value={data.website || ''} onChange={handleChange} className="form-input py-3 hover:border-gray-300 transition-colors" placeholder="https://acme.com" />
+                          <input name="website" value={data.website || ''} onChange={handleChange} className="form-input py-3 hover:border-gray-300 transition-colors" placeholder="https://company.com" />
                         </div>
                         <div className="md:col-span-2">
                           <label className="form-label">Business Address</label>
-                          <textarea name="address" value={data.address || ''} onChange={handleChange} rows={3} className="form-input py-3 hover:border-gray-300 transition-colors" placeholder="123 Business Rd&#10;City, State, Zip" />
+                          <textarea name="address" value={data.address || ''} onChange={handleChange} rows={3} className="form-input py-3 hover:border-gray-300 transition-colors" placeholder={"123 Business Rd\nCity, Region"} />
                         </div>
                       </div>
                     </div>
+
+                    {/* Account Owner Info */}
+                    {data.user && (
+                      <div>
+                        <h3 className="text-xl font-black text-gray-900 mb-1">Account Owner</h3>
+                        <p className="text-sm text-gray-500 font-medium mb-6">Your personal account details.</p>
+                        
+                        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                          <div className="flex items-center gap-4 mb-6">
+                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-primary to-blue-500 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-brand-primary/20">
+                              {data.user.name?.charAt(0)?.toUpperCase() || 'A'}
+                            </div>
+                            <div>
+                              <div className="font-bold text-gray-900 text-lg">{data.user.name || 'Admin'}</div>
+                              <div className="text-sm text-gray-500 font-medium">{data.user.role || 'ADMIN'}</div>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex items-center gap-3 bg-white rounded-xl p-4 border border-gray-100">
+                              <Mail size={18} className="text-gray-400 shrink-0" />
+                              <div className="min-w-0">
+                                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Email</div>
+                                <div className="text-sm font-medium text-gray-900 truncate">{data.user.email}</div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3 bg-white rounded-xl p-4 border border-gray-100">
+                              <Building size={18} className="text-gray-400 shrink-0" />
+                              <div className="min-w-0">
+                                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Company</div>
+                                <div className="text-sm font-medium text-gray-900 truncate">{data.name || 'Not set'}</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -171,12 +208,10 @@ export default function SettingsPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
                         <div>
                           <label className="form-label">Default Currency</label>
-                          <select name="defaultCurrency" value={data.defaultCurrency || 'USD'} onChange={handleChange} className="form-input py-3 hover:border-gray-300 transition-colors">
-                            <option value="USD">USD ($)</option>
-                            <option value="EUR">EUR (€)</option>
-                            <option value="GBP">GBP (£)</option>
-                            <option value="CAD">CAD ($)</option>
-                            <option value="AUD">AUD ($)</option>
+                          <select name="defaultCurrency" value={data.defaultCurrency || DEFAULT_CURRENCY} onChange={handleChange} className="form-input py-3 hover:border-gray-300 transition-colors">
+                            {CURRENCIES.map(c => (
+                              <option key={c.code} value={c.code}>{c.code} ({c.symbol}) — {c.name}</option>
+                            ))}
                           </select>
                         </div>
                         <div>

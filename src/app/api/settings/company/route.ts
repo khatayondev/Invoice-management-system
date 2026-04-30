@@ -9,9 +9,15 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const company = await prisma.company.findUnique({
-      where: { id: session.user.companyId },
-    });
+    const [company, user] = await Promise.all([
+      prisma.company.findUnique({
+        where: { id: session.user.companyId },
+      }),
+      prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { id: true, name: true, email: true, role: true }
+      })
+    ]);
 
     if (!company) {
       return NextResponse.json({ error: 'Company not found' }, { status: 404 });
@@ -28,7 +34,7 @@ export async function GET(request: Request) {
       company.stripeWebhookSecret = '********';
     }
 
-    return NextResponse.json(company);
+    return NextResponse.json({ ...company, user });
   } catch (error) {
     console.error('Settings GET error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
