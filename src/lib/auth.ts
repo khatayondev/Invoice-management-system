@@ -35,13 +35,7 @@ export async function login(user: { id: string; email: string; name: string; rol
 
 export async function logout() {
   const cookieStore = await cookies();
-  cookieStore.set('session', '', {
-    expires: new Date(0),
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-  });
+  cookieStore.delete('session');
 }
 
 export async function getSession() {

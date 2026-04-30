@@ -16,12 +16,7 @@ export default function SidebarNav({ onNavigate }: { onNavigate?: () => void }) 
     { href: '/settings', label: 'Settings', icon: Settings }
   ];
 
-  async function handleLogout() {
-    if (!window.confirm('Are you sure you want to log out?')) return;
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/login');
-    router.refresh();
-  }
+
 
   return (
     <div className="flex flex-col h-full">
@@ -49,15 +44,7 @@ export default function SidebarNav({ onNavigate }: { onNavigate?: () => void }) 
         })}
       </nav>
       
-      <div className="p-6">
-        <button 
-          onClick={handleLogout}
-          className="flex items-center gap-4 px-4 py-3 text-gray-500 font-medium transition-colors w-full rounded-xl hover:bg-red-50 hover:text-red-600"
-        >
-          <LogOut size={20} />
-          <span>Log Out</span>
-        </button>
-      </div>
+
     </div>
   );
 }

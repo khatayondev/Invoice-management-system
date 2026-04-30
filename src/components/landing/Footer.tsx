@@ -26,9 +26,9 @@ export default function Footer() {
             </p>
             <div className="flex gap-4">
               {['X', 'in', 'ig'].map((s, i) => (
-                <a key={i} href="#" className="w-10 h-10 rounded-xl bg-gray-800 hover:bg-[#4318FF] flex items-center justify-center text-gray-400 hover:text-white text-xs font-bold transition-all">
+                <Link key={i} href="/" className="w-10 h-10 rounded-xl bg-gray-800 hover:bg-[#4318FF] flex items-center justify-center text-gray-400 hover:text-white text-xs font-bold transition-all">
                   {s}
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -38,7 +38,7 @@ export default function Footer() {
             <h4 className="font-bold text-sm text-white mb-4 uppercase tracking-wider">Product</h4>
             <ul className="space-y-3">
               {productLinks.map((l) => (
-                <li key={l}><a href="#" className="text-gray-400 hover:text-white text-sm font-medium transition-colors">{l}</a></li>
+                <li key={l}><Link href="/" className="text-gray-400 hover:text-white text-sm font-medium transition-colors">{l}</Link></li>
               ))}
             </ul>
           </div>
@@ -48,7 +48,7 @@ export default function Footer() {
             <h4 className="font-bold text-sm text-white mb-4 uppercase tracking-wider">Company</h4>
             <ul className="space-y-3">
               {companyLinks.map((l) => (
-                <li key={l}><a href="#" className="text-gray-400 hover:text-white text-sm font-medium transition-colors">{l}</a></li>
+                <li key={l}><Link href="/" className="text-gray-400 hover:text-white text-sm font-medium transition-colors">{l}</Link></li>
               ))}
             </ul>
           </div>
@@ -58,7 +58,7 @@ export default function Footer() {
             <h4 className="font-bold text-sm text-white mb-4 uppercase tracking-wider">Legal</h4>
             <ul className="space-y-3">
               {legalLinks.map((l) => (
-                <li key={l}><a href="#" className="text-gray-400 hover:text-white text-sm font-medium transition-colors">{l}</a></li>
+                <li key={l}><Link href="/" className="text-gray-400 hover:text-white text-sm font-medium transition-colors">{l}</Link></li>
               ))}
             </ul>
           </div>

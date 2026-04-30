@@ -67,9 +67,9 @@ export default function HeroSection() {
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 animate-[fadeUp_1.2s_ease-out]">
-          <a href="/register" className="bg-[#4318FF] text-white font-bold px-8 py-4 rounded-2xl text-lg hover:bg-[#3311db] shadow-xl shadow-[#4318FF]/25 hover:shadow-[#4318FF]/40 transition-all hover:-translate-y-1 hover:scale-105">
+          <Link href="/register" className="bg-[#4318FF] text-white font-bold px-8 py-4 rounded-2xl text-lg hover:bg-[#3311db] shadow-xl shadow-[#4318FF]/25 hover:shadow-[#4318FF]/40 transition-all hover:-translate-y-1 hover:scale-105">
             Start for Free
-          </a>
+          </Link>
           <a href="#how-it-works" className="bg-white/80 backdrop-blur-md border border-gray-200 text-gray-700 font-bold px-8 py-4 rounded-2xl text-lg hover:border-[#4318FF]/30 hover:text-[#4318FF] transition-all hover:-translate-y-0.5 shadow-sm">
             See How It Works
           </a>
