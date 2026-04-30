@@ -42,12 +42,12 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <a href="/login" className="text-sm font-bold text-gray-700 hover:text-[#4318FF] transition-colors">
+          <Link href="/login" className="text-sm font-bold text-gray-700 hover:text-[#4318FF] transition-colors">
             Sign In
-          </a>
-          <a href="/login" className="bg-[#4318FF] text-white text-sm font-bold px-6 py-3 rounded-xl hover:bg-[#3311db] shadow-lg shadow-[#4318FF]/25 hover:shadow-[#4318FF]/40 transition-all hover:-translate-y-0.5">
+          </Link>
+          <Link href="/register" className="bg-[#4318FF] text-white text-sm font-bold px-6 py-3 rounded-xl hover:bg-[#3311db] shadow-lg shadow-[#4318FF]/25 hover:shadow-[#4318FF]/40 transition-all hover:-translate-y-0.5">
             Get Started Free
-          </a>
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
@@ -68,10 +68,10 @@ export default function Navbar() {
               </a>
             ))}
             <div className="pt-4 border-t border-gray-100 space-y-3">
-              <a href="/login" className="block text-sm font-bold text-gray-700 py-2">Sign In</a>
-              <a href="/login" className="block bg-[#4318FF] text-white text-sm font-bold px-6 py-3 rounded-xl text-center shadow-lg shadow-[#4318FF]/25">
+              <Link href="/login" className="block text-sm font-bold text-gray-700 py-2">Sign In</Link>
+              <Link href="/register" className="block bg-[#4318FF] text-white text-sm font-bold px-6 py-3 rounded-xl text-center shadow-lg shadow-[#4318FF]/25">
                 Get Started Free
-              </a>
+              </Link>
             </div>
           </div>
         </div>

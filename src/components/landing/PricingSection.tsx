@@ -73,9 +73,9 @@ export default function PricingSection() {
                 ))}
               </ul>
 
-              <a href="/login" className={`block w-full text-center font-bold py-4 rounded-2xl transition-all text-sm ${plan.popular ? 'bg-white text-[#4318FF] hover:bg-gray-100 shadow-lg' : 'bg-[#4318FF] text-white hover:bg-[#3311db] shadow-lg shadow-[#4318FF]/20'}`}>
+              <Link href={plan.href} className={`block w-full text-center font-bold py-4 rounded-2xl transition-all text-sm ${plan.popular ? 'bg-white text-[#4318FF] hover:bg-gray-100 shadow-lg' : 'bg-[#4318FF] text-white hover:bg-[#3311db] shadow-lg shadow-[#4318FF]/20'}`}>
                 {plan.cta}
-              </a>
+              </Link>
             </div>
           ))}
         </div>
