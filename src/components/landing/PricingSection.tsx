@@ -5,7 +5,7 @@ import Link from 'next/link';
 const plans = [
   {
     name: 'Starter',
-    price: 'GH₵ 0',
+    price: 'GHS 0',
     period: '/month',
     desc: 'For freelancers just getting started',
     features: ['Up to 5 invoices/month', '1 client profile', 'Basic templates', 'Manual payment tracking', 'Email support'],
@@ -15,7 +15,7 @@ const plans = [
   },
   {
     name: 'Pro',
-    price: 'GH₵ 180',
+    price: 'GHS 180',
     period: '/month',
     desc: 'For active freelancers and solo businesses',
     features: ['Unlimited invoices', 'Unlimited clients', 'Automated payment reminders', 'Payment links', 'Multi-currency support', 'Revenue dashboard', 'Priority email support'],
@@ -25,7 +25,7 @@ const plans = [
   },
   {
     name: 'Business',
-    price: 'GH₵ 450',
+    price: 'GHS 450',
     period: '/month',
     desc: 'For teams and growing agencies',
     features: ['Everything in Pro', 'Up to 10 team members', 'Client portal access', 'Custom invoice branding', 'Advanced reports & exports', 'Tax automation', 'Dedicated account manager'],

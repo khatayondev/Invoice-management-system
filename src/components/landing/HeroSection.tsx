@@ -79,7 +79,7 @@ export default function HeroSection() {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-8 max-w-xl mx-auto mt-16 animate-[fadeUp_1.6s_ease-out]">
           <div>
-            <div className="text-3xl md:text-4xl font-black text-gray-900">GH₵ <AnimatedCounter target={650} />M+</div>
+            <div className="text-3xl md:text-4xl font-black text-gray-900">GHS <AnimatedCounter target={650} />M+</div>
             <div className="text-sm text-gray-500 font-medium mt-1">Invoices processed</div>
           </div>
           <div className="border-x border-gray-200 px-8">
