@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Plus, Search, Filter, Eye, Download, Upload, MoreHorizontal, FileText, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import { Plus, Search, Filter, Eye, Download, Upload, Trash2, FileText, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
 
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<any[]>([]);
@@ -192,13 +192,10 @@ export default function InvoicesPage() {
         </div>
 
         {/* Table Area */}
-        <div className="overflow-x-auto p-4">
+        <div className="hidden md:block overflow-x-auto p-4">
           <table className="w-full text-sm text-left border-separate border-spacing-y-2">
             <thead>
               <tr className="text-gray-400">
-                <th className="pb-3 px-4 font-semibold w-10">
-                  <input type="checkbox" className="rounded text-brand-primary focus:ring-brand-primary border-gray-300" />
-                </th>
                 <th className="pb-3 px-4 font-semibold uppercase tracking-wider text-[11px]">Invoice</th>
                 <th className="pb-3 px-4 font-semibold uppercase tracking-wider text-[11px]">Client</th>
                 <th className="pb-3 px-4 font-semibold uppercase tracking-wider text-[11px]">Date Issued</th>
@@ -210,13 +207,13 @@ export default function InvoicesPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={8} className="text-center py-12 text-gray-500 font-medium">
+                <tr><td colSpan={7} className="text-center py-12 text-gray-500 font-medium">
                   <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-brand-primary mr-3 align-middle"></div>
                   Loading invoices...
                 </td></tr>
               ) : invoices.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-20">
+                  <td colSpan={7} className="text-center py-20">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-50 text-gray-400 mb-4 shadow-inner">
                       <Search size={32} />
                     </div>
@@ -226,10 +223,7 @@ export default function InvoicesPage() {
                 </tr>
               ) : invoices.map((invoice: any) => (
                 <tr key={invoice.id} className="bg-white hover:bg-gray-50 hover:shadow-md transition-all rounded-xl group">
-                  <td className="py-4 px-4 rounded-l-xl border-y border-l border-transparent group-hover:border-gray-100">
-                    <input type="checkbox" className="rounded text-brand-primary focus:ring-brand-primary border-gray-300" />
-                  </td>
-                  <td className="py-4 px-4 font-black text-gray-900 border-y border-transparent group-hover:border-gray-100">
+                  <td className="py-4 px-4 rounded-l-xl border-y border-l border-transparent group-hover:border-gray-100 font-black text-gray-900">
                     {invoice.number}
                   </td>
                   <td className="py-4 px-4 border-y border-transparent group-hover:border-gray-100">
@@ -256,8 +250,17 @@ export default function InvoicesPage() {
                       <Link href={`/invoices/${invoice.id}`} className="p-2 text-gray-400 hover:text-brand-primary bg-white rounded-lg hover:shadow-sm border border-transparent hover:border-gray-100 transition-all">
                         <Eye size={16} />
                       </Link>
-                      <button className="p-2 text-gray-400 hover:text-gray-900 bg-white rounded-lg hover:shadow-sm border border-transparent hover:border-gray-100 transition-all">
-                        <MoreHorizontal size={16} />
+                      <button
+                        onClick={async () => {
+                          if (!window.confirm(`Delete invoice ${invoice.number}? This cannot be undone.`)) return;
+                          const res = await fetch(`/api/invoices/${invoice.id}`, { method: 'DELETE' });
+                          if (res.ok) {
+                            setInvoices(invoices.filter((i: any) => i.id !== invoice.id));
+                          }
+                        }}
+                        className="p-2 text-gray-400 hover:text-red-500 bg-white rounded-lg hover:shadow-sm border border-transparent hover:border-gray-100 transition-all"
+                      >
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>
@@ -265,6 +268,39 @@ export default function InvoicesPage() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card List */}
+        <div className="md:hidden p-4 space-y-3">
+          {loading ? (
+            <div className="text-center py-12 text-gray-500 font-medium">
+              <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-brand-primary mr-3 align-middle"></div>Loading...
+            </div>
+          ) : invoices.length === 0 ? (
+            <div className="text-center py-12">
+              <Search size={32} className="mx-auto text-gray-400 mb-3" />
+              <h3 className="text-lg font-bold text-gray-900 mb-1">No invoices found</h3>
+              <p className="text-gray-500 text-sm">Try adjusting your filters.</p>
+            </div>
+          ) : invoices.map((invoice: any) => (
+            <Link key={invoice.id} href={`/invoices/${invoice.id}`} className="block bg-white border border-gray-100 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-black text-gray-900 text-sm">{invoice.number}</span>
+                <span className={`inline-block px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider ${getStatusStyle(invoice.status)}`}>
+                  {invoice.status.replace('_', ' ')}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="min-w-0">
+                  <div className="text-sm font-bold text-gray-700 truncate">{invoice.client?.name || 'Unknown'}</div>
+                  <div className="text-xs text-gray-400 mt-0.5">Due {new Date(invoice.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="font-black text-gray-900">${invoice.grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </div>

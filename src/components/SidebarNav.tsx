@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, FileText, Users, Box, Settings, HelpCircle, LogOut } from 'lucide-react';
+import { Home, FileText, Users, Box, Settings, LogOut } from 'lucide-react';
 
-export default function SidebarNav() {
+export default function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -31,7 +31,12 @@ export default function SidebarNav() {
           const Icon = link.icon;
           
           return (
-            <Link key={link.href} href={link.href} className={`sidebar-link ${isActive ? 'active' : ''} relative`}>
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => onNavigate?.()}
+              className={`sidebar-link ${isActive ? 'active' : ''} relative`}
+            >
               {Icon ? <Icon size={20} strokeWidth={isActive ? 2.5 : 2} /> : <div className="w-[20px]" />}
               <span>{link.label}</span>
               {link.badge && (
@@ -56,3 +61,4 @@ export default function SidebarNav() {
     </div>
   );
 }
+

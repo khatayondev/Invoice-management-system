@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Search, Plus, User, Building, Mail, MoreHorizontal, Download, Upload, Users, Activity, FileText } from 'lucide-react';
+import { Search, Plus, User, Building, Mail, Trash2, Download, Upload, Users, Activity, FileText } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -187,13 +187,10 @@ export default function ClientsPage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto p-4">
+        <div className="hidden md:block overflow-x-auto p-4">
           <table className="w-full text-sm text-left border-separate border-spacing-y-2">
             <thead>
               <tr className="text-gray-400">
-                <th className="pb-3 px-4 font-semibold w-10">
-                  <input type="checkbox" className="rounded text-brand-primary focus:ring-brand-primary border-gray-300" />
-                </th>
                 <th className="pb-3 px-4 font-semibold uppercase tracking-wider text-[11px]">Client</th>
                 <th className="pb-3 px-4 font-semibold uppercase tracking-wider text-[11px]">Contact</th>
                 <th className="pb-3 px-4 font-semibold uppercase tracking-wider text-[11px] text-center">Invoices</th>
@@ -202,12 +199,12 @@ export default function ClientsPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={5} className="text-center py-12 text-gray-500 font-medium">
+                <tr><td colSpan={4} className="text-center py-12 text-gray-500 font-medium">
                   <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-brand-primary mr-3 align-middle"></div>
                   Loading clients...
                 </td></tr>
               ) : clients.length === 0 ? (
-                <tr><td colSpan={5} className="text-center py-20">
+                <tr><td colSpan={4} className="text-center py-20">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-50 text-gray-400 mb-4 shadow-inner">
                       <Search size={32} />
                     </div>
@@ -217,9 +214,6 @@ export default function ClientsPage() {
               ) : clients.map(client => (
                 <tr key={client.id} className="bg-white hover:bg-gray-50 hover:shadow-md transition-all rounded-xl group cursor-pointer">
                   <td className="py-4 px-4 rounded-l-xl border-y border-l border-transparent group-hover:border-gray-100">
-                    <input type="checkbox" className="rounded text-brand-primary focus:ring-brand-primary border-gray-300" />
-                  </td>
-                  <td className="py-4 px-4 border-y border-transparent group-hover:border-gray-100">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-blue-500 text-white flex items-center justify-center font-bold shadow-sm">
                         {client.name.charAt(0).toUpperCase()}
@@ -244,10 +238,19 @@ export default function ClientsPage() {
                   <td className="py-4 px-4 text-right rounded-r-xl border-y border-r border-transparent group-hover:border-gray-100">
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Link href={`/clients/${client.id}`} className="p-2 text-gray-400 hover:text-brand-primary bg-white rounded-lg hover:shadow-sm border border-transparent hover:border-gray-100 transition-all font-medium text-xs flex items-center gap-1">
-                        View Profile
+                        View
                       </Link>
-                      <button className="p-2 text-gray-400 hover:text-gray-900 bg-white rounded-lg hover:shadow-sm border border-transparent hover:border-gray-100 transition-all">
-                        <MoreHorizontal size={16} />
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (!window.confirm(`Delete client "${client.name}"? This cannot be undone.`)) return;
+                          const res = await fetch(`/api/clients/${client.id}`, { method: 'DELETE' });
+                          if (res.ok) { toast.success('Client deleted'); fetchClients(); }
+                          else toast.error('Failed to delete client');
+                        }}
+                        className="p-2 text-gray-400 hover:text-red-500 bg-white rounded-lg hover:shadow-sm border border-transparent hover:border-gray-100 transition-all"
+                      >
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>
@@ -255,6 +258,52 @@ export default function ClientsPage() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card List */}
+        <div className="md:hidden p-4 space-y-3">
+          {loading ? (
+            <div className="text-center py-12 text-gray-500 font-medium">
+              <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-brand-primary mr-3 align-middle"></div>Loading...
+            </div>
+          ) : clients.length === 0 ? (
+            <div className="text-center py-12">
+              <Search size={32} className="mx-auto text-gray-400 mb-3" />
+              <h3 className="text-lg font-bold text-gray-900 mb-1">No clients found</h3>
+              <p className="text-gray-500 text-sm">Try adjusting your search.</p>
+            </div>
+          ) : clients.map(client => (
+            <Link key={client.id} href={`/clients/${client.id}`} className="block bg-white border border-gray-100 rounded-xl p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-blue-500 text-white flex items-center justify-center font-bold shadow-sm shrink-0 text-sm">
+                    {client.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-gray-900 text-sm truncate">{client.name}</div>
+                    {client.clientCompany && <div className="text-xs text-gray-500 truncate">{client.clientCompany}</div>}
+                    {client.email && <div className="text-xs text-gray-400 truncate mt-0.5">{client.email}</div>}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="px-2 py-1 bg-gray-100 rounded text-[10px] font-bold text-gray-600">{client._count?.invoices || 0}</span>
+                  <button
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (!window.confirm(`Delete "${client.name}"?`)) return;
+                      const res = await fetch(`/api/clients/${client.id}`, { method: 'DELETE' });
+                      if (res.ok) { toast.success('Client deleted'); fetchClients(); }
+                      else toast.error('Failed to delete');
+                    }}
+                    className="p-2 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
 

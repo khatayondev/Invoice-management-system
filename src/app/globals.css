@@ -43,9 +43,30 @@
   .sidebar {
     @apply w-72 bg-white flex flex-col m-4 rounded-3xl overflow-hidden shrink-0 sticky top-4 h-[calc(100vh-2rem)];
   }
+
+  /* Mobile: sidebar is hidden by default, shown as overlay */
+  @media (max-width: 768px) {
+    .sidebar {
+      @apply fixed inset-0 z-50 w-full max-w-[280px] m-0 rounded-none h-full top-0;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    .sidebar.open {
+      transform: translateX(0);
+    }
+    .sidebar-overlay {
+      @apply fixed inset-0 bg-black/50 z-40;
+    }
+  }
   
   .sidebar-header {
     @apply p-8 text-2xl font-bold tracking-tight border-none text-gray-900;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar-header {
+      @apply p-6 text-xl;
+    }
   }
   
   .sidebar-nav {
@@ -67,15 +88,34 @@
   .main-content {
     @apply flex-1 py-8 pr-8 max-w-full overflow-x-hidden;
   }
+
+  @media (max-width: 768px) {
+    .main-content {
+      @apply px-4 py-6 pr-4;
+    }
+  }
   
   .page-header {
     @apply flex justify-between items-center mb-8;
+  }
+
+  @media (max-width: 640px) {
+    .page-header {
+      @apply flex-col items-start gap-4;
+    }
   }
   
   /* Buttons */
   .btn {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-bold rounded-xl cursor-pointer border-none transition-all;
   }
+
+  @media (max-width: 640px) {
+    .btn {
+      @apply px-4 py-2.5 text-xs;
+    }
+  }
+
   .btn-primary {
     @apply bg-brand-primary text-white hover:bg-brand-hover shadow-md shadow-brand-primary/20;
   }
@@ -90,8 +130,21 @@
   .card {
     @apply bg-white rounded-[24px] border-none mb-6 overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.02)];
   }
+
+  @media (max-width: 640px) {
+    .card {
+      @apply rounded-2xl;
+    }
+  }
+
   .card-body {
     @apply p-6;
+  }
+
+  @media (max-width: 640px) {
+    .card-body {
+      @apply p-4;
+    }
   }
 
   /* Forms */
@@ -109,6 +162,12 @@
   .invoice-wrapper {
     @apply bg-white max-w-4xl mx-auto shadow-[0_4px_24px_rgba(0,0,0,0.02)] rounded-[24px] p-16 text-gray-900;
   }
+
+  @media (max-width: 640px) {
+    .invoice-wrapper {
+      @apply p-6 rounded-2xl;
+    }
+  }
   
   /* Tables */
   .table {
@@ -124,6 +183,17 @@
   .table tbody tr:hover {
     @apply bg-gray-50/50;
   }
+
+  @media (max-width: 640px) {
+    .table th, .table td {
+      @apply px-3 py-3 text-xs;
+    }
+  }
+
+  /* Mobile hamburger button */
+  .mobile-menu-btn {
+    @apply md:hidden fixed top-4 left-4 z-30 w-10 h-10 bg-white rounded-xl shadow-md flex items-center justify-center text-gray-700;
+  }
 }
 
 @media print {
@@ -132,3 +202,4 @@
   .main-content { padding: 0 !important; }
   .invoice-wrapper { box-shadow: none !important; padding: 0 !important; }
 }
+
