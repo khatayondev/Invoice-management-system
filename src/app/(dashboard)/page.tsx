@@ -65,70 +65,10 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="main-content">
-      {/* Top Header */}
-      <div className="flex justify-between items-center mb-10 animate-fade-in">
-        <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">{greeting}, Admin!</h1>
-          <p className="text-gray-500 mt-1 font-medium">Here is what's happening with your business today.</p>
-        </div>
-        
-        <div className="flex items-center gap-6">
-          <div className="relative hidden md:block">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Search anything..." 
-              className="w-72 bg-white/60 backdrop-blur-md border border-gray-100 rounded-2xl py-3 pl-12 pr-4 text-sm text-gray-700 shadow-[0_4px_24px_rgba(0,0,0,0.02)] focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all hover:bg-white"
-            />
-          </div>
-
-          <div className="relative cursor-pointer bg-white shadow-sm p-3 rounded-full hover:shadow-md transition-all">
-            <Bell size={20} className="text-gray-600" />
-            <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
-          </div>
-          
-          {/* Profile Dropdown Container */}
-          <div className="relative">
-            <div 
-              className="flex items-center gap-3 cursor-pointer bg-white p-1.5 pr-4 rounded-full shadow-sm hover:shadow-md transition-all border border-gray-100"
-              onClick={() => setShowProfileMenu(!showProfileMenu)}
-            >
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-primary to-purple-500 flex items-center justify-center text-white font-bold shadow-inner">
-                A
-              </div>
-              <div className="hidden md:block text-left">
-                <div className="text-sm font-bold text-gray-900">Admin User</div>
-                <div className="text-xs text-gray-500">Sales Admin</div>
-              </div>
-              <ChevronDown size={16} className={`text-gray-400 transition-transform ${showProfileMenu ? 'rotate-180' : ''}`} />
-            </div>
-
-            {/* Dropdown Menu */}
-            {showProfileMenu && (
-              <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-fade-in overflow-hidden">
-                <div className="px-4 py-3 border-b border-gray-50 mb-1">
-                  <p className="text-sm text-gray-900 font-bold">Admin User</p>
-                  <p className="text-xs text-gray-500 font-medium">demo@example.com</p>
-                </div>
-                <button 
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                  onClick={() => { setShowProfileMenu(false); alert('Help center coming soon!'); }}
-                >
-                  <HelpCircle size={18} className="text-gray-400" />
-                  Help & Support
-                </button>
-                <button 
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
-                  onClick={handleLogout}
-                >
-                  <LogOut size={18} className="text-red-500" />
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+    <div>
+      <div className="mt-2 md:mt-0 mb-10 animate-fade-in">
+        <h1 className="text-3xl font-black text-gray-900 tracking-tight">{greeting}, Admin!</h1>
+        <p className="text-gray-500 mt-1 font-medium">Here is what's happening with your business today.</p>
       </div>
 
       {/* Top Row: Floating Stats Cards */}

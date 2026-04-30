@@ -115,7 +115,7 @@ export default function ProductsPage() {
   const uniqueUnits = new Set(products.map(p => p.unit)).size;
 
   return (
-    <div className="main-content">
+    <div className="mt-2 md:mt-0">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 animate-fade-in">
         <div>
           <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900">Products & Services</h2>

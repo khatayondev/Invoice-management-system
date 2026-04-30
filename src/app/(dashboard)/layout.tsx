@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import SidebarNav from '@/components/SidebarNav';
-import { Menu, X } from 'lucide-react';
+import TopBar from '@/components/TopBar';
+import { X } from 'lucide-react';
 
 export default function DashboardLayout({
   children,
@@ -13,15 +14,6 @@ export default function DashboardLayout({
 
   return (
     <div className="app-container">
-      {/* Mobile hamburger */}
-      <button
-        className="mobile-menu-btn"
-        onClick={() => setSidebarOpen(true)}
-        aria-label="Open menu"
-      >
-        <Menu size={22} />
-      </button>
-
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -51,7 +43,13 @@ export default function DashboardLayout({
         </div>
         <SidebarNav onNavigate={() => setSidebarOpen(false)} />
       </aside>
-      {children}
+
+      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+        <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8 md:py-8">
+          <TopBar onMenuClick={() => setSidebarOpen(true)} />
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

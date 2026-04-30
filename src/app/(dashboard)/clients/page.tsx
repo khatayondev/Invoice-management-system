@@ -111,7 +111,7 @@ export default function ClientsPage() {
   const totalInvoicesGenerated = clients.reduce((sum, c) => sum + (c._count?.invoices || 0), 0);
 
   return (
-    <div className="main-content">
+    <div className="mt-2 md:mt-0">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 animate-fade-in">
         <div>

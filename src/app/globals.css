@@ -189,11 +189,6 @@
       @apply px-3 py-3 text-xs;
     }
   }
-
-  /* Mobile hamburger button */
-  .mobile-menu-btn {
-    @apply md:hidden fixed top-4 left-4 z-30 w-10 h-10 bg-white rounded-xl shadow-md flex items-center justify-center text-gray-700;
-  }
 }
 
 @media print {
