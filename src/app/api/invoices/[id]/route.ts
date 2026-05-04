@@ -80,6 +80,8 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
           notes: body.notes,
           terms: body.terms,
           paymentInstructions: body.paymentInstructions,
+          pdfTheme: body.pdfTheme,
+          themeColors: body.themeColors !== undefined ? body.themeColors : undefined,
           lineItems: {
             create: body.lineItems.map((item: any, index: number) => ({
               productId: item.productId || null,

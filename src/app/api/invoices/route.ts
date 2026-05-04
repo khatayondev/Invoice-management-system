@@ -83,6 +83,8 @@ export async function POST(request: Request) {
         notes: body.notes,
         terms: body.terms,
         paymentInstructions: body.paymentInstructions,
+        pdfTheme: body.pdfTheme || 'CLASSIC',
+        themeColors: body.themeColors || null,
         lineItems: {
           create: body.lineItems.map((item: any, index: number) => ({
             productId: item.productId || null,

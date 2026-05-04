@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Plus, Search, Filter, Eye, Edit, Download, Upload, Trash2, FileText, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import { Plus, Search, Filter, Eye, Edit, Download, Upload, Trash2, FileText, CheckCircle2, Clock, AlertCircle, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import ActionDropdown from '@/components/ActionDropdown';
 
@@ -252,7 +252,12 @@ export default function InvoicesPage() {
                   <td className="py-4 px-4 text-right rounded-r-xl border-y border-r border-transparent group-hover:border-gray-100">
                     <ActionDropdown actions={[
                       { label: 'View', icon: <Eye size={16} />, onClick: () => router.push(`/invoices/${invoice.id}`) },
-                      { label: 'Edit', icon: <Edit size={16} />, onClick: () => router.push(`/invoices/${invoice.id}`) },
+                      { label: 'Edit', icon: <Edit size={16} />, onClick: () => router.push(`/invoices/${invoice.id}/edit`) },
+                      { label: 'Duplicate', icon: <Copy size={16} />, onClick: async () => {
+                        const res = await fetch(`/api/invoices/${invoice.id}/duplicate`, { method: 'POST' });
+                        if (res.ok) { const data = await res.json(); toast.success('Invoice duplicated'); router.push(`/invoices/${data.invoice.id}`); }
+                        else toast.error('Failed to duplicate');
+                      }},
                       { label: 'Delete', icon: <Trash2 size={16} />, variant: 'danger', onClick: async () => {
                         if (!window.confirm(`Delete invoice ${invoice.number}?`)) return;
                         const res = await fetch(`/api/invoices/${invoice.id}`, { method: 'DELETE' });

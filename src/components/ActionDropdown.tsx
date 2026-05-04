@@ -31,14 +31,16 @@ export default function ActionDropdown({ actions }: { actions: ActionItem[] }) {
     if (!open) return;
     function handleClose(e: MouseEvent) {
       if (btnRef.current && btnRef.current.contains(e.target as Node)) return;
+      
+      // Also check if we clicked inside the dropdown portal
+      const dropdownEl = document.getElementById('action-dropdown-portal');
+      if (dropdownEl && dropdownEl.contains(e.target as Node)) return;
+      
       setOpen(false);
     }
-    function handleScroll() { setOpen(false); }
     document.addEventListener('mousedown', handleClose);
-    window.addEventListener('scroll', handleScroll, true);
     return () => {
       document.removeEventListener('mousedown', handleClose);
-      window.removeEventListener('scroll', handleScroll, true);
     };
   }, [open]);
 
@@ -65,6 +67,7 @@ export default function ActionDropdown({ actions }: { actions: ActionItem[] }) {
 
       {open && typeof window !== 'undefined' && createPortal(
         <div
+          id="action-dropdown-portal"
           className="fixed z-[9999]"
           style={{ top: position.top, left: position.left }}
         >

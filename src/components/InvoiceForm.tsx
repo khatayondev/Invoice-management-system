@@ -4,8 +4,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Plus, Trash2, Save, FileText } from 'lucide-react';
 import { CURRENCIES, DEFAULT_CURRENCY, getCurrencySymbol } from '@/lib/currencies';
+import { getDefaultColors, COLOR_PRESETS } from '@/lib/themeColors';
 
-export default function InvoiceForm({ companySettings, clients, products }: any) {
+export default function InvoiceForm({ companySettings, clients, products, initialData }: any) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const defaultClientId = searchParams.get('client');
@@ -13,23 +14,35 @@ export default function InvoiceForm({ companySettings, clients, products }: any)
   const [loading, setLoading] = useState(false);
   
   // Basic Info
-  const [clientId, setClientId] = useState(defaultClientId || '');
-  const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
-  const [dueDate, setDueDate] = useState(new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]); // Default 15 days
-  const [currency, setCurrency] = useState(companySettings?.defaultCurrency || DEFAULT_CURRENCY);
-  const [pdfTheme, setPdfTheme] = useState('CLASSIC');
+  const [clientId, setClientId] = useState(initialData?.clientId || defaultClientId || '');
+  const [issueDate, setIssueDate] = useState(initialData?.issueDate ? new Date(initialData.issueDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
+  const [dueDate, setDueDate] = useState(initialData?.dueDate ? new Date(initialData.dueDate).toISOString().split('T')[0] : new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]); // Default 15 days
+  const [currency, setCurrency] = useState(initialData?.currency || companySettings?.defaultCurrency || DEFAULT_CURRENCY);
+  const [pdfTheme, setPdfTheme] = useState(initialData?.pdfTheme || 'CLASSIC');
+  const [themeColors, setThemeColors] = useState<any>(initialData?.themeColors ? JSON.parse(initialData.themeColors) : null);
+
+  // Derived current colors
+  const currentColors = themeColors || getDefaultColors(pdfTheme);
   
   // Line Items
-  const [items, setItems] = useState([
+  const [items, setItems] = useState(initialData?.lineItems?.map((item: any) => ({
+    id: item.id || Math.random().toString(36).substr(2, 9),
+    productId: item.productId || '',
+    description: item.description || '',
+    quantity: item.quantity || 1,
+    unitPrice: item.unitPrice || 0,
+    taxAmount: item.taxAmount || 0,
+    lineTotal: item.lineTotal || 0
+  })) || [
     { id: Date.now(), productId: '', description: '', quantity: 1, unitPrice: 0, taxAmount: 0 }
   ]);
   
   // Totals & Terms
-  const [discountType, setDiscountType] = useState('PERCENTAGE'); // PERCENTAGE, FIXED
-  const [discountValue, setDiscountValue] = useState(0);
-  const [notes, setNotes] = useState(companySettings?.defaultNotes || '');
-  const [terms, setTerms] = useState(companySettings?.defaultTerms || '');
-  const [paymentInstructions, setPaymentInstructions] = useState(companySettings?.paymentInstructions || '');
+  const [discountType, setDiscountType] = useState(initialData?.discountType || 'PERCENTAGE'); // PERCENTAGE, FIXED
+  const [discountValue, setDiscountValue] = useState(initialData?.discountValue || 0);
+  const [notes, setNotes] = useState(initialData?.notes !== undefined ? initialData.notes : (companySettings?.defaultNotes || ''));
+  const [terms, setTerms] = useState(initialData?.terms !== undefined ? initialData.terms : (companySettings?.defaultTerms || ''));
+  const [paymentInstructions, setPaymentInstructions] = useState(initialData?.paymentInstructions !== undefined ? initialData.paymentInstructions : (companySettings?.paymentInstructions || ''));
 
   // Derived calculations
   const subtotal = useMemo(() => {
@@ -91,6 +104,7 @@ export default function InvoiceForm({ companySettings, clients, products }: any)
       terms,
       paymentInstructions,
       pdfTheme,
+      themeColors: themeColors ? JSON.stringify(themeColors) : null,
       lineItems: items.map(item => ({
         ...item,
         lineTotal: item.quantity * item.unitPrice
@@ -98,15 +112,22 @@ export default function InvoiceForm({ companySettings, clients, products }: any)
     };
 
     try {
-      const res = await fetch('/api/invoices', {
-        method: 'POST',
+      const url = initialData?.id ? `/api/invoices/${initialData.id}` : '/api/invoices';
+      const method = initialData?.id ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(invoiceData)
       });
       
       if (res.ok) {
-        const { invoice } = await res.json();
-        router.push(`/invoices/${invoice.id}`);
+        if (initialData?.id) {
+          router.push(`/invoices/${initialData.id}`);
+        } else {
+          const { invoice } = await res.json();
+          router.push(`/invoices/${invoice.id}`);
+        }
       } else {
         alert('Failed to save invoice');
         setLoading(false);
@@ -126,8 +147,12 @@ export default function InvoiceForm({ companySettings, clients, products }: any)
             <FileText size={24} />
           </div>
           <div>
-            <h1 className="text-3xl font-light text-gray-900 tracking-wider">NEW INVOICE</h1>
-            <p className="text-sm text-gray-500 mt-1">Number will be auto-generated</p>
+            <h1 className="text-3xl font-light text-gray-900 tracking-wider">
+              {initialData?.id ? 'EDIT INVOICE' : 'NEW INVOICE'}
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">
+              {initialData?.id ? `Editing ${initialData.number}` : 'Number will be auto-generated'}
+            </p>
           </div>
         </div>
         <div className="text-right">
@@ -176,10 +201,58 @@ export default function InvoiceForm({ companySettings, clients, products }: any)
           </div>
           <div>
             <label className="form-label">PDF Theme</label>
-            <select className="form-input" value={pdfTheme} onChange={e => setPdfTheme(e.target.value)}>
+            <select className="form-input" value={pdfTheme} onChange={e => {
+              setPdfTheme(e.target.value);
+              setThemeColors(null); // Reset colors when theme changes
+            }}>
               <option value="CLASSIC">Classic</option>
               <option value="MODERN">Modern</option>
+              <option value="MINIMAL">Minimal</option>
+              <option value="PROFESSIONAL">Professional</option>
             </select>
+          </div>
+          <div>
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="form-label mb-0">Colors</label>
+              {themeColors && (
+                <button type="button" onClick={() => setThemeColors(null)} className="text-[10px] text-gray-400 hover:text-brand-primary underline">Reset</button>
+              )}
+            </div>
+            <div className="flex gap-2 mb-2">
+              <input 
+                type="color" 
+                value={currentColors.primaryColor} 
+                onChange={(e) => setThemeColors({ ...currentColors, primaryColor: e.target.value })}
+                className="w-8 h-8 rounded cursor-pointer border-0 p-0"
+                title="Primary Color"
+              />
+              <input 
+                type="color" 
+                value={currentColors.secondaryColor} 
+                onChange={(e) => setThemeColors({ ...currentColors, secondaryColor: e.target.value })}
+                className="w-8 h-8 rounded cursor-pointer border-0 p-0"
+                title="Secondary Color"
+              />
+              <input 
+                type="color" 
+                value={currentColors.bgColor} 
+                onChange={(e) => setThemeColors({ ...currentColors, bgColor: e.target.value })}
+                className="w-8 h-8 rounded cursor-pointer border-0 p-0"
+                title="Background Color"
+              />
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {COLOR_PRESETS.map((preset) => (
+                <button
+                  key={preset.name}
+                  type="button"
+                  title={preset.name}
+                  onClick={() => setThemeColors(preset.colors)}
+                  className="w-4 h-4 rounded-full border border-gray-200 shadow-sm hover:scale-110 transition-transform"
+                  style={{ backgroundColor: preset.colors.primaryColor }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

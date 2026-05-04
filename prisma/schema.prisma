@@ -107,7 +107,8 @@ model Invoice {
   notes               String?
   terms               String?
   paymentInstructions String?
-  pdfTheme            String        @default("CLASSIC") // CLASSIC, MODERN
+  pdfTheme            String        @default("CLASSIC") // CLASSIC, MODERN, MINIMAL, PROFESSIONAL
+  themeColors         String?       // JSON: { primaryColor, secondaryColor, bgColor }
   
   lineItems           InvoiceItem[]
   payments            Payment[]
