@@ -2,6 +2,7 @@ import ClassicInvoicePDF from './pdf-templates/ClassicInvoicePDF';
 import ModernInvoicePDF from './pdf-templates/ModernInvoicePDF';
 import MinimalInvoicePDF from './pdf-templates/MinimalInvoicePDF';
 import ProfessionalInvoicePDF from './pdf-templates/ProfessionalInvoicePDF';
+import Special1InvoicePDF from './pdf-templates/Special1InvoicePDF';
 import { getThemeColors } from '@/lib/themeColors';
 
 export default function InvoicePDF({ invoice }: { invoice: any }) {
@@ -15,6 +16,8 @@ export default function InvoicePDF({ invoice }: { invoice: any }) {
       return <MinimalInvoicePDF invoice={invoice} colors={colors} />;
     case 'PROFESSIONAL':
       return <ProfessionalInvoicePDF invoice={invoice} colors={colors} />;
+    case 'SPECIAL_1':
+      return <Special1InvoicePDF invoice={invoice} colors={colors} />;
     case 'CLASSIC':
     default:
       return <ClassicInvoicePDF invoice={invoice} colors={colors} />;

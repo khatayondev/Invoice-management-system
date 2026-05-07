@@ -209,6 +209,7 @@ export default function InvoiceForm({ companySettings, clients, products, initia
               <option value="MODERN">Modern</option>
               <option value="MINIMAL">Minimal</option>
               <option value="PROFESSIONAL">Professional</option>
+              <option value="SPECIAL_1">Special 1</option>
             </select>
           </div>
           <div>

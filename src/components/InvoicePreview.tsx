@@ -2,6 +2,7 @@ import ClassicInvoicePreview from './preview-templates/ClassicInvoicePreview';
 import ModernInvoicePreview from './preview-templates/ModernInvoicePreview';
 import MinimalInvoicePreview from './preview-templates/MinimalInvoicePreview';
 import ProfessionalInvoicePreview from './preview-templates/ProfessionalInvoicePreview';
+import Special1InvoicePreview from './preview-templates/Special1InvoicePreview';
 import { getThemeColors } from '@/lib/themeColors';
 
 export default function InvoicePreview({ invoice }: { invoice: any }) {
@@ -15,6 +16,8 @@ export default function InvoicePreview({ invoice }: { invoice: any }) {
       return <MinimalInvoicePreview invoice={invoice} colors={colors} />;
     case 'PROFESSIONAL':
       return <ProfessionalInvoicePreview invoice={invoice} colors={colors} />;
+    case 'SPECIAL_1':
+      return <Special1InvoicePreview invoice={invoice} colors={colors} />;
     case 'CLASSIC':
     default:
       return <ClassicInvoicePreview invoice={invoice} colors={colors} />;

@@ -1,11 +1,28 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import bcrypt from 'bcryptjs';
+import path from 'node:path';
 
-const prisma = new PrismaClient();
+const DATABASE_URL = process.env.DATABASE_URL || `file:${path.join(__dirname, 'dev.db')}`;
+const adapter = new PrismaBetterSqlite3({
+  url: DATABASE_URL,
+});
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('Clearing existing data...');
-  // Delete all data (cascading takes care of relations)
+  // Delete in reverse dependency order to avoid FK constraints
+  await prisma.notification.deleteMany();
+  await prisma.auditLog.deleteMany();
+  await prisma.recurringSchedule.deleteMany();
+  await prisma.emailLog.deleteMany();
+  await prisma.payment.deleteMany();
+  await prisma.invoiceItem.deleteMany();
+  await prisma.invoice.deleteMany();
+  await prisma.product.deleteMany();
+  await prisma.taxRate.deleteMany();
+  await prisma.client.deleteMany();
+  await prisma.user.deleteMany();
   await prisma.company.deleteMany();
 
   console.log('Seeding demo data...');

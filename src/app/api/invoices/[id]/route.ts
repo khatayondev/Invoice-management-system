@@ -81,7 +81,9 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
           terms: body.terms,
           paymentInstructions: body.paymentInstructions,
           pdfTheme: body.pdfTheme,
-          themeColors: body.themeColors !== undefined ? body.themeColors : undefined,
+          themeColors: body.themeColors !== undefined
+            ? (body.themeColors ? (typeof body.themeColors === 'string' ? body.themeColors : JSON.stringify(body.themeColors)) : null)
+            : undefined,
           lineItems: {
             create: body.lineItems.map((item: any, index: number) => ({
               productId: item.productId || null,

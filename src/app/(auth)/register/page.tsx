@@ -55,7 +55,7 @@ export default function RegisterPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5" suppressHydrationWarning>
         <div>
           <label className="form-label" htmlFor="companyName">Company Name</label>
           <input

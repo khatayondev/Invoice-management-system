@@ -26,6 +26,11 @@ const DEFAULTS: Record<string, ThemeColors> = {
     secondaryColor: '#64748B', // Slate-500
     bgColor: '#FAFAFA',
   },
+  SPECIAL_1: {
+    primaryColor: '#1A1A1A',   // Near-black
+    secondaryColor: '#666666', // Medium gray
+    bgColor: '#FFFFFF',
+  },
 };
 
 /**
